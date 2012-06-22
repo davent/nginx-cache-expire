@@ -6,18 +6,29 @@ Description: Expires Nginx's file cache when content is changed/updated.
 Version: 0.0.1
 Author: Dave Avent
 Author URI: http:/lumux.co.uk/
-License: Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
+License: GPL Version 2 http://www.gnu.org/licenses/gpl-2.0.html
 */
 
-class NginxCacheExpire {
+define('NCE_DIR', WP_CONTENT_DIR . '/plugins/nginx-cache-expire');
+
+define('NCE_LIB_DIR', NCE_DIR . '/lib');
+
+require(NCE_LIB_DIR . '/NginxCacheExpire.inc.php');
+
+class WPNginxCacheExpire {
 
 	// URLs we wish to expire
 	protected $expire_urls = array();
 
 	// Wordpress events which should trigger a cache expiry 
 	protected $registered_events = array('publish_post', 'edit_post', 'deleted_post');
+
+	var $ngx_cache;
     
 	public function __construct() {
+
+		// Instansiate NginxCacheExpire with hard-coded $cache_dir and $cache_levels for now
+		$this->ngx_cache = new NginxCacheExpire('/data/cache/nginx', '1:2');
 
 		foreach ($this->registered_events as $event) {
 
@@ -57,11 +68,19 @@ class NginxCacheExpire {
 	// Actually expire the URL from Nginx
 	protected function expire( $url ) {
 
-		file_put_contents('/tmp/nginx-cache-expire.log', $url . "\n", FILE_APPEND | LOCK_EX);
+        	if($this->ngx_cache->uri( $url )) {
+
+                	$this->ngx_cache->expire();
+
+        	} else {
+
+			error_log( "Could not expire " . $url );
+
+		}
 
 	}
 
 }
 
-$nginx_cache_expire = new NginxCacheExpire();
+$nginx_cache_expire = new WPNginxCacheExpire();
 
