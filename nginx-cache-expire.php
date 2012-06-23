@@ -5,7 +5,7 @@ Plugin URI: http://github.com/davent/nginx-cache-expire/
 Description: Expires Nginx's file cache when content is changed/updated.
 Version: 0.0.1
 Author: Dave Avent
-Author URI: http:/lumux.co.uk/
+Author URI: http://lumux.co.uk/
 License: GPL Version 2 http://www.gnu.org/licenses/gpl-2.0.html
 */
 
@@ -60,6 +60,9 @@ class WPNginxCacheExpire {
  
 			// Clear the homepage too to take in to account updated posts
 			$this->expire(home_url());
+
+			// If content has changed we should really update /sitemap.xml to keep the search engines happy
+			$this->expire(site_url() . '/sitemap.xml');
 
 		}        
 
