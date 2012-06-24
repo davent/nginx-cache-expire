@@ -16,5 +16,5 @@ TODO
 
  * Proper/some error reporting and logging
 
- * Configuration of trigger events via the CMS
+ * Add more Events triggers to the Options page
 

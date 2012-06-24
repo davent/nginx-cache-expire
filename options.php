@@ -12,6 +12,7 @@ function register_mysettings() {
 	//register our settings
 	register_setting( 'myoptions-group', 'nce_cache_dir', 'sanatize_nce_cache_dir' );
 	register_setting( 'myoptions-group', 'nce_cache_level', 'sanatize_nce_cache_level' );
+	register_setting( 'myoptions-group', 'nce_triggers' );
 }
 
 function sanatize_nce_cache_dir($input) {
@@ -59,6 +60,7 @@ function nginx_cache_expire_options() {
 
 <form method="post" action="options.php">
     <?php settings_fields( 'myoptions-group' ); ?>
+	<h3>Expiry options</h3>
     <table class="form-table">
         <tr valign="top">
         <th scope="row">Nginx Cache Path</th>
@@ -71,7 +73,24 @@ function nginx_cache_expire_options() {
         </tr>
         
     </table>
-    
+	<h3>Expiry triggers</h3>
+	<?php $nce_triggers = get_option( 'nce_triggers' ); ?>
+    <table class="form-table">
+        <tr valign="top">
+        <th scope="row">Publish Post</th>
+        <td><input type="checkbox" name="nce_triggers[publish_post]" value="1"<?php checked( isset( $nce_triggers['publish_post'] ) ); ?> /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">Edit Post</th>
+        <td><input type="checkbox" name="nce_triggers[edit_post]" value="1"<?php checked( isset( $nce_triggers['edit_post'] ) ); ?> /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">Delete Post</th>
+        <td><input type="checkbox" name="nce_triggers[deleted_post]" value="1"<?php checked( isset( $nce_triggers['deleted_post'] ) ); ?> /></td>
+        </tr>
+	</table>
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes'); ?>" />
     </p>
@@ -79,4 +98,3 @@ function nginx_cache_expire_options() {
 </form>
 </div>
 <?php } ?>
-

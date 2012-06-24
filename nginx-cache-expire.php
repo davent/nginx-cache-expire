@@ -22,9 +22,6 @@ class WPNginxCacheExpire {
 	// URLs we wish to expire
 	protected $expire_urls = array();
 
-	// Wordpress events which should trigger a cache expiry 
-	protected $registered_events = array('publish_post', 'edit_post', 'deleted_post');
-
 	var $ngx_cache;
     
 	public function __construct() {
@@ -36,7 +33,7 @@ class WPNginxCacheExpire {
 		// Instansiate NginxCacheExpire with hard-coded $cache_dir and $cache_levels for now
 		$this->ngx_cache = new NginxCacheExpire(get_option('nce_cache_dir'), get_option('nce_cache_level'));
 
-		foreach ($this->registered_events as $event) {
+		foreach ($this->registered_events() as $event) {
 
 			add_action($event, array($this, 'add_to_expire_list'));
 
@@ -47,12 +44,28 @@ class WPNginxCacheExpire {
 
 	static function activate() {
 
-		//add_option( 'nce_cache_dir' );
-		//add_option( 'nce_cache_levels' );
-
 	}
 
 	static function deactivate() {
+	}
+
+	// Return the WordPress Events which should trigger a cache expiring
+	private function registered_events () {
+
+		$triggers = array();
+
+		foreach( get_option( 'nce_triggers' ) as $trigger => $enabled ) {
+
+			if( $enabled == "1" ) {
+
+				$triggers[] = $trigger;
+
+			}
+
+		}
+
+		return $triggers;
+
 	}
 
 	// Add a URL to the list to be expired
