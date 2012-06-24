@@ -12,5 +12,5 @@ TODO
 
  * Proper/some error reporting and logging
 
- * Configuration of trigger events, cache_dir, cache_level etc via the CMS
+ * Configuration of trigger events via the CMS
 

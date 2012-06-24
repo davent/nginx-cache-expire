@@ -15,6 +15,8 @@ define('NCE_LIB_DIR', NCE_DIR . '/lib');
 
 require(NCE_LIB_DIR . '/NginxCacheExpire.inc.php');
 
+include(NCE_DIR . '/options.php');
+
 class WPNginxCacheExpire {
 
 	// URLs we wish to expire
@@ -27,8 +29,12 @@ class WPNginxCacheExpire {
     
 	public function __construct() {
 
+		// manages plugin activation and deactivation
+                register_activation_hook( __FILE__, array(&$this, 'activate') );
+                register_deactivation_hook( __FILE__, array(&$this, 'deactivate') );
+		
 		// Instansiate NginxCacheExpire with hard-coded $cache_dir and $cache_levels for now
-		$this->ngx_cache = new NginxCacheExpire('/data/cache/nginx', '1:2');
+		$this->ngx_cache = new NginxCacheExpire(get_option('nce_cache_dir'), get_option('nce_cache_level'));
 
 		foreach ($this->registered_events as $event) {
 
@@ -37,6 +43,16 @@ class WPNginxCacheExpire {
 		}
 
 		add_action('shutdown', array($this, 'expire_posts'));
+	}
+
+	static function activate() {
+
+		//add_option( 'nce_cache_dir' );
+		//add_option( 'nce_cache_levels' );
+
+	}
+
+	static function deactivate() {
 	}
 
 	// Add a URL to the list to be expired
@@ -87,3 +103,4 @@ class WPNginxCacheExpire {
 
 $nginx_cache_expire = new WPNginxCacheExpire();
 
+?>
