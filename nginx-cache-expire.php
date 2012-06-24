@@ -89,7 +89,14 @@ class WPNginxCacheExpire {
 
         	if($this->ngx_cache->uri( $url )) {
 
-                	$this->ngx_cache->expire();
+                	if( $this->ngx_cache->expire() ) {
+
+
+			} else {
+
+				error_log( "Could not expire " . $url );
+
+			}
 
         	} else {
 
